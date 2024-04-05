@@ -7,23 +7,11 @@
 
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form method="post" action="{{ route('todo.store') }}" class="">
-                    @csrf
-                    @method('post')
-                    <div class="mb-6">
-                        <x-input-label for="title" :value="__('Title')"></x-input-label>
-                        <x-text-input id="title" class="block w-full mt-1" type="text" name="title" required autofocus autocomplete="title"></x-text-input>
-                        <x-input-error class="mt-2" :messages="$errors->get('title')"></x-input-error>
+            <div class="overflow-hidden bg-white shadow-xl sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200 sm:px-20">
+                    <div class="text-2xl">
+                        {{ __('Create Todo Page') }}
                     </div>
-                    <div class="flex items-center gap-4">
-                        <x-primary-button>{{ __('Save') }}</x-primary-button>
-                        <a href="{{ route('todo.index') }}"
-                        class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md dark:bg-gray-200 dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                        >{{ __('Cancel') }}</a>
-                    </div>
-                    </form>
                 </div>
             </div>
         </div>
