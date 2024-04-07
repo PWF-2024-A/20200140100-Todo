@@ -30,8 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/todo', [TodoController::class, 'index'])->name('todo.index');
+    Route::post('/todo', [TodoController::class, 'store'])->name('todo.store');
     Route::get('/todo/create', [TodoController::class, 'create'])->name('todo.create');
     Route::get('/todo/edit', [TodoController::class, 'edit'])->name('todo.edit');
+    Route::patch('/todo/{todo}/complete', [TodoController::class, 'complete'])->name('todo.complete');
+    Route::patch('/todo/{todo}/incomplete', [TodoController::class, 'uncomplete'])->name('todo.uncomplete');
 
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
 });
