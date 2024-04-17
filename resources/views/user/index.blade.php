@@ -79,6 +79,31 @@
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3">
                                             {{-- Action Here --}}
+                                            @if ($user->is_admin)
+                                                <form action="{{ route('user.revokeadmin', $user) }}" method="post">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                    class="text-xs text-white bg-red-500 hover:bg-red-700 px-2 py-1 rounded-md">Revoke
+                                                    Admin</button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('user.makeadmin', $user) }}" method="post">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                    class="text-xs text-white bg-green-500 hover:bg-green-700 px-2 py-1 rounded-md">Make
+                                                    Admin</button>
+                                                </form>
+                                            @endif
+                                            @csrf
+                                            @method('DELETE')
+                                            <form action="{{ route('user.destroy', $user) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="text-xs text-white bg-red-500 hover:bg-red-700 px-2 py-1 rounded-md">Delete</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

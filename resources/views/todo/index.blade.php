@@ -9,25 +9,30 @@
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg">
-                <div class="p-6 text-x1 text-gray-900 dark:text-gray-100">
+                <div class="p-6 text-gray-900 text-x1 dark:text-gray-100">
                     <div class="flex items-center justify-between">
                         <div>
                             <x-create-button href="{{ route('todo.create') }}"></x-create-button>
                         </div>
                     </div>
-                    <div>
-                        @if (session('success'))
-                        <p x-data="{show: true}" x-show="show" x-transition
-                        x-init="setTimeout(() => show => false, 5000)"
-                        class="text-sm text-green-600 dark:text-green-400">{{ session('success') }}</p>
-
-                        @endif
-                        @if (session('error'))
-                        <p x-data="{show: true}" x-show="show" x-transition
-                        x-init="setTimeout(() => show => false, 5000)"
-                        class="text-sm text-red-600 dark:text-red-400">{{ session('error') }}</p>
-
-                        @endif
+                    <div class="px-6 text-xl text-gray-900 dark:text-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div></div>
+                            <div>
+                                @if (@session('success'))
+                                    <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show => false, 5000)"
+                                        class="text-sm text-green-600 dark:text-green-400">
+                                        {{ session('success') }}
+                                    </p>
+                                @endif
+                                @if (@session('error'))
+                                    <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show => false, 5000)"
+                                        class="text-sm text-red-600 dark:text-red-400">
+                                        {{ session('error') }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="relative overflow-x-auto">
@@ -55,6 +60,24 @@
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-3">
                                         {{-- Action Here --}}
+                                        @if ($todo->is_complete == false)
+                                        <form action="{{ route('todo.complete', $todo) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="px-2 py-1 text-xs text-white bg-green-500 rounded-md hover:bg-green-700">Complete</button>
+                                        </form>
+                                        @else
+                                        <form action="{{ route('todo.incomplete', $todo) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="px-2 py-1 text-xs text-white bg-red-500 rounded-md hover:bg-red-700">Incomplete</button>
+                                        </form>
+                                        @endif
+                                        <form action="{{ route('todo.destroy', $todo) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2 py-1 text-xs text-white bg-red-500 rounded-md hover:bg-red-700">Delete</button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -66,6 +89,21 @@
                         </tbody>
                     </table>
                 </div>
+                @if ($todosCompleted > 1)
+                <div class="p-6 text-xl text-gray-900 dark:text-gray-100">
+                    <form action="{{ route('todo.deleteallcompleted') }}" method="post">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="px-2 py-1 text-xs text-white bg-red-500 rounded-md hover:bg-red-700">Delete All Completed</button>
+                    </form>
+                </div>
+
+                @endif
+                @if ($todos->hasPages())
+                    <div class="p-3">
+                        {{ $todos->links() }}
+                    </div>
+                @endif
             </div>
         </div>
 </x-app-layout>
