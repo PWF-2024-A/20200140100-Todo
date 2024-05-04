@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Psy\Command\EditCommand;
 use App\Models\Todo;
@@ -12,11 +13,11 @@ class TodoController extends Controller
 {
     public function index()
     {
-        $todos = Todo::where('user_id', auth()->user()->id)
+        $todos = Todo::with('category')
+            ->where('user_id', auth()->user()->id)
             ->orderBy('is_complete', 'asc')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
-        //dd($todos);
 
         $todosCompleted = Todo::where('user_id', auth()->user()->id)
             ->where('is_complete', true)
@@ -26,41 +27,26 @@ class TodoController extends Controller
 
     public function create()
     {
-        return view('todo.create');
+        $categories = Category::all();
+        return view('todo.create', compact('categories'));
     }
 
 
-    public function store(Request $request, Todo $todo)
+
+    public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            // 'description' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'is_complete' => 'required',
         ]);
 
-        // practical
         $todo = new Todo();
         $todo->title = $request->title;
-        // $todo->description = $request->description;
+        $todo->category_id = $request->category_id;
         $todo->user_id = auth()->user()->id;
         $todo->is_complete = $request->is_complete == '1' ? true : false;
         $todo->save();
-
-        //query bulder way
-        // DB::table('todos')->insert([
-        //     'title' => $request->title,
-        //     'description' => $request->description,
-        //     'user_id' => auth()->user()->id,
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        // ]);
-
-        //eloquent way
-        // $todo = Todo::create([
-        //     'title' => ucfirst($request->title),
-        //     'user_id' => auth()->user()->id,
-        //     'is_complete' => '0',
-        // ]);
 
         return redirect()->route('todo.index')->with('success', 'Todo created successfully');
     }
@@ -76,35 +62,29 @@ class TodoController extends Controller
     public function incomplete(Todo $todo)
     {
         $todo->is_complete = false;
-    $todo->save();
+        $todo->save();
 
-    return redirect()->route('todo.index')->with('success', 'Todo marked as incomplete');
+        return redirect()->route('todo.index')->with('success', 'Todo marked as incomplete');
     }
 
     public function edit(Todo $todo)
     {
-        if (auth()->user()->id == $todo->user_id) {
-            return view('todo.edit', compact('todo'));
-        } else {
-            return redirect()->route('todo.index')->with('error', 'You are not authorized to edit this todo');
-        }
+        $categories = Category::all();
+        return view('todo.edit', compact('todo', 'categories'));
     }
 
     public function update(Request $request, Todo $todo)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            // 'description' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
-        //practical
-        // $todo->title = $request->title;
-        // $todo->save();
-
-        //eloquent way
         $todo->update([
             'title' => ucfirst($request->title),
+            'category_id' => $request->category_id,
         ]);
+
         return redirect()->route('todo.index')->with('success', 'Todo updated successfully');
     }
 
